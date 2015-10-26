@@ -149,3 +149,93 @@ public class Calculator {
 	// Форма считается валидной, если в каждом из полей текст ещё не введён
 	// или введён текст, корректно преобразующийся к нужному числовому типу
 	// данных.
+private boolean validate() {
+		if (!jNumberOfPeople.getText().equals("")) {
+			try {
+				Integer.parseInt(jNumberOfPeople.getText());
+			} catch (Exception e) {
+				//  Если одна из операций завершилась с ошибкой — форма не проходит валидацию.
+				showError("В поле \"Количество человек\" должно быть введено целое число");
+				return false;
+			}
+			if (Integer.parseInt(jNumberOfPeople.getText()) > MAX_PEOPLE) {
+				showError("Количество человек не может превышать "+MAX_PEOPLE);
+				return false;
+			}
+		}
+		if (!jCostOneDay.getText().equals("")) {
+			try {
+				double tCostOneday = Double.parseDouble(jCostOneDay.getText());
+				if (!isCorrectCurrencyValue(tCostOneday)) {
+					throw new RuntimeException();
+				}
+			} catch (Exception e) {
+				showError("В поле \"Стоимость одного дня проживания\" должно быть введено целое число или дробь с точностью до одной сотой");
+				return false;
+			}
+		}
+		if (!jDays.getText().equals("")) {
+			try {
+				Integer.parseInt(jDays.getText());
+			} catch (Exception e) {
+				showError("В поле \"Количество дней проживания\" должно быть введено целое число");
+				return false;
+			}
+		}
+		try {
+			for (int i=0; i<numberOfPeople; i++) {
+				if (!jPersonalAviaCost[i].getText().equals("")) {
+					double tPersonalAviaCost = Double.parseDouble(jPersonalAviaCost[i].getText());
+					if (!isCorrectCurrencyValue(tPersonalAviaCost)) {
+						throw new RuntimeException();
+					}
+				}
+				if (!jPersonalTransferCost[i].getText().equals("")) {
+					double tPersonalTransferCost = Double.parseDouble(jPersonalTransferCost[i].getText());
+					if (!isCorrectCurrencyValue(tPersonalTransferCost)) {
+						throw new RuntimeException();
+					}
+				}
+			}
+		} catch (Exception e) {
+			showError("Стоимость авиаперелёта и трансфера должна быть целым чисом или десятичной дробью с точнотью до одной сотой");
+			return false;
+		}
+		// Если все проверки пройдены — не показывать ошибку и вернуть true.
+		hideError();
+		return true;
+	}
+	// Проверяет, является ли число double корректным значением для
+	// обозначения количества валюты (имеет точность не более одной сотой).
+	private boolean isCorrectCurrencyValue(double value) {
+		String s = new Double(value).toString();
+		if (
+			(s.lastIndexOf(".") == -1
+			|| s.lastIndexOf(".") == s.length()-3
+			|| s.lastIndexOf(".") == s.length()-2)
+			&& s.indexOf(".") == s.lastIndexOf(".")
+		) {
+		// Если третий с конца или второй с конца символ — точка, либо в
+		// запси числа вообще нет точки, и в записи числа есть только одна
+		// точка, то это число — корректное значение для количества валюты
+			return true;
+		}
+		return false;
+	}
+	// Показать сообщение об ошибке
+	private void showError(String text) {
+		StyleConstants.setForeground(attribs, Color.RED);
+		StyleConstants.setFontSize(attribs, 12);				
+		lError.setParagraphAttributes(attribs,true);
+		lError.setText(text);
+	}
+	private void showAnswer(String text) {
+		StyleConstants.setForeground(attribs, Color.BLUE);
+		StyleConstants.setFontSize(attribs, 20);				
+		lError.setParagraphAttributes(attribs,true);
+		lError.setText(text);
+	}
+	// Убрать сообщение об ошибке
+	private void hideError() {
+		lError.setText("");
+	}
