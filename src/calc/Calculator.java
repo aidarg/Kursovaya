@@ -77,3 +77,75 @@ public class Calculator {
 		// Содержимое третьей панели
 		JLabel lAvia = new JLabel("Перелёта");
 		JLabel lTransfer = new JLabel("Трансфера");
+// Содержимое панели с ошибками
+		// Установаить внешний вид теста в сообщени об ошибке
+		StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
+		StyleConstants.setFontFamily(attribs, "Sans-Serif");
+		StyleConstants.setBold(attribs, true);
+		lError.setPreferredSize(new Dimension(200, 80));
+		lError.setParagraphAttributes(attribs,true);
+		// Установить цвет фона
+		lError.setBackground(frame.getBackground());
+
+		// Содержимое последней панели с кнопкой "Рассчитать"
+		JButton bCalculate = new JButton("Рассчитать");
+
+		// Обработчики событий
+		jNumberOfPeople.getDocument().addDocumentListener(onFillListener);
+		jCostOneDay.getDocument().addDocumentListener(onFillListener);
+		jDays.getDocument().addDocumentListener(onFillListener);
+		bCalculate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (!validate() || !validateFilled()) {
+					return;
+				}
+				costOneDay = Double.parseDouble(jCostOneDay.getText());
+				days = Integer.parseInt(jDays.getText());
+				numberOfPeople = Integer.parseInt(jNumberOfPeople.getText());
+				for (int i=0; i<numberOfPeople; i++) {
+					personalAviaCost[i] = Double.parseDouble(jPersonalAviaCost[i].getText());
+					personalTransferCost[i] = Double.parseDouble(jPersonalTransferCost[i].getText());
+				}
+				showAnswer(""+calculate());
+			}
+		});
+
+		pTableColsHeadings.add(lAvia);
+		lAvia.setHorizontalAlignment(SwingConstants.CENTER);
+		pTableColsHeadings.add(lTransfer);
+		lTransfer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		frame.setContentPane(pMain);
+		frame.setResizable(false);
+		// Собираем панели из элементов
+		// Первая
+		pFirst.add(lCostOneDay);
+		pFirst.add(jCostOneDay);
+		pFirst.add(lDays);
+		pFirst.add(jDays);
+		pFirst.add(lNumberOfPeople);
+		pFirst.add(jNumberOfPeople);
+		// Заголовок всей таблицы
+		pTableHeader.add(lTourists);
+		// Заголовки колонок таблицы
+		pTableColsHeadings.add(lAvia);
+		pTableColsHeadings.add(lTransfer);
+		// Ошибки
+		pError.add(lError);
+		// Кнопки
+		pButtons.add(bCalculate);
+		// Собираем все панели на главной панели
+		pMain.add(pFirst);
+		pMain.add(pTableHeader);
+		pMain.add(pTableColsHeadings);
+		pMain.add(pTable);
+		pMain.add(pError);
+		pMain.add(pButtons);
+
+		frame.pack();
+		frame.setVisible(true);
+	}
+	// Возвращает true, если все поля формы валидные. Иначе возвращает false.
+	// Форма считается валидной, если в каждом из полей текст ещё не введён
+	// или введён текст, корректно преобразующийся к нужному числовому типу
+	// данных.
