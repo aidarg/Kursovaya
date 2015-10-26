@@ -239,3 +239,69 @@ private boolean validate() {
 	private void hideError() {
 		lError.setText("");
 	}
+// Суммировать значения в массиве от 0 до numberOfPeople
+	private double sum(double[] array) {
+		double s = 0;
+		for (int i=0, l=numberOfPeople; i<l; i++) {
+			s += array[i];
+		}
+		return s;
+	}
+	// Проверяет, все ли поля заполнены. Возвращает false и показывает
+	// ошибку, если хотя бы  одно поле не заполнено. Возвращает true, если
+	// все поля заполнены (не обязательно валидно заполнены — метод лишь
+	// проверяет, что в них что-то есть).
+	private boolean validateFilled() {
+		if (jCostOneDay.getText().equals("")) {
+			showError("Поле \"Стоимость одного дня проживания\" не заполнено");
+			return false;
+		}
+		if (jDays.getText().equals("")) {
+			showError("Поле \"Количество дней проживания\" не заполнено");
+			return false;
+		}
+		if (jNumberOfPeople.getText().equals("")) {
+			showError("Поле \"Количество человек\" не заполнено");
+			return false;
+		}
+		for (int i=0; i<numberOfPeople; i++) {
+			if (
+				jPersonalAviaCost[i].getText().equals("") 
+				|| jPersonalTransferCost[i].getText().equals("")
+			) {
+				showError("Не все поля в таблице заполнены");
+				return false;
+			}
+		}
+		return true;
+	}
+	// Строит таблицу с туристами, основываясь на введённом количестве
+	// туристов (numberOfPeople).
+	// prevNumberOfPeople — количество человек в предыдущем расчёте (см. комментарии ниже)
+	private void buildTouristsTable(int prevNumberOfPeople) {
+		for (int i=prevNumberOfPeople; i<numberOfPeople; i++) {
+		// Создаём компоненты в таблице. Если таблица строится не в первый раз
+		// после запуска программы, то мы можем использовать уже созданные
+		// поля ввода, поэтому часть полей (от [0] до
+		// [prevNumberOfPeople-1] можно не создавать заново). При первом
+		// запуске buildTouristsTable() этот шаг просто пропустится, так как
+		// prevNumberOfPeople == 0 при первом запуске.
+			jPersonalAviaCost[i] = new JTextField();
+			jPersonalTransferCost[i] = new JTextField();
+			jPersonalAviaCost[i].getDocument().addDocumentListener(onFillListener);
+			jPersonalTransferCost[i].getDocument().addDocumentListener(onFillListener);
+			pTable.add(jPersonalAviaCost[i]);
+			pTable.add(jPersonalTransferCost[i]);
+		}
+		for (int i=numberOfPeople; i<prevNumberOfPeople; i++) {
+		// Теперь, наоборот, убираем лишние поля ввода из таблицы, если они остались с предыдущего шага.
+			pTable.remove(jPersonalAviaCost[i]);
+			pTable.remove(jPersonalTransferCost[i]);
+		}
+		frame.pack();
+	}
+	// Вычисляет стоимость сложного тура (Сст) по формуле
+	private double calculate() {
+		return costOneDay*days*numberOfPeople+sum(personalAviaCost)+sum(personalTransferCost);
+	}
+}
