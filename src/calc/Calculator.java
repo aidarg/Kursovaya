@@ -1,82 +1,89 @@
 ﻿package calc;
-import javax.swing.*;
+import javax.swing.*;// Swing – библиотека, которая включает в себя кнопки, текстовые поля и другие элементы управления графическими  приложениями.  С помощью звёздочки, все классы из javax.swing становятся находимыми
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
-import java.awt.*;
+import java.awt.*; //AWT – Это библиотека – простой набор классов, таких, как Button (кнопка), TextField (текстовое поле), Label (текстовая метка или иконка) и другие.
 import java.awt.event.*;
-public class Calculator {
-	private static final int MAX_PEOPLE = 100;
-	private double costOneDay;            // Сс
-	private int days;                     // H
-	private int numberOfPeople = 0;       // n
-	private double[] personalAviaCost = new double[MAX_PEOPLE];    // Can
-	private double[] personalTransferCost = new double[MAX_PEOPLE];// Синд
-	private JTextField jCostOneDay = new JTextField();
-	private JTextField jDays = new JTextField();
-	private JTextField jNumberOfPeople = new JTextField();
-	private JTextField[] jPersonalAviaCost = new JTextField[MAX_PEOPLE];
-	private JTextField[] jPersonalTransferCost = new JTextField[MAX_PEOPLE];
-	// Для отображения ошибок
-	private final JTextPane lError = new JTextPane(); 
-	// Таблица для ввода стоимостей трансфера и авиаперелёта для
-	// отдельных пассажиров.
-	private final JPanel pTable = new JPanel(new GridLayout(0, 2, 4, 4));
-	private final JFrame frame = new JFrame("Рассчёт стоимости тура");
-	// Визуальные свойства текста
-	SimpleAttributeSet attribs = new SimpleAttributeSet();
-	private final DocumentListener onFillListener = new DocumentListener() {
-		public void changedUpdate(DocumentEvent e) {
-			process();
-		}
-		public void removeUpdate(DocumentEvent e) {
-			process();
-		}
-		public void insertUpdate(DocumentEvent e) {
-			process();
-		}
-		public void process() {
-		// Сперва проверяем всю форму.
-			if (jNumberOfPeople.getText().equals("") || !validate()) {
-				return;
-			}
-			int prevNumberOfPeople = numberOfPeople;
-			numberOfPeople = Integer.parseInt(jNumberOfPeople.getText());
-			buildTouristsTable(prevNumberOfPeople);
-		}
-	};
-	public static void main(String[] args) {
-		new Calculator();
-	}
-	public Calculator() {
-		// Создаём окно приложения
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// Создаём внутренности окна
-		JPanel pMain = new JPanel();
-		
-		JPanel pFirst = new JPanel();
-		pFirst.setPreferredSize(new Dimension(300,110));
-		pFirst.setLayout(new BoxLayout(pFirst, BoxLayout.Y_AXIS));
-		JPanel pTableColsHeadings = new JPanel(new GridLayout(0, 2));
-		JPanel pButtons = new JPanel(new GridLayout(0, 2));
-		JPanel pTableHeader = new JPanel();
-		JPanel pError = new JPanel();
 
-		//panel.setLayout(new GridLayout(0, 1));
-		pMain.setLayout(new BoxLayout(pMain, BoxLayout.Y_AXIS));
-		pMain.setBorder(new EmptyBorder(10, 10, 10, 10));
+public class Calculator { //объявление класса Calculator. класс Calculator имеет уровень доступа public, это значит что у любого класса есть доступ к нему
+//объявление переменных
+private static final int MAX_PEOPLE = 100; //константа, максимальное количество людей
+    private double costOneDay;            // Сс - Стоимость одного дня проживания (сутки)
+    private int days;                     // H - количество дней
+    private int numberOfPeople = 0;       // n - количество людей 
+    private double[] personalAviaCost = new double[MAX_PEOPLE];    // Can - стоимость перелета для n-ого туриста
+    private double[] personalTransferCost = new double[MAX_PEOPLE];// Синд - стоимость индивидуального трансфера
 
-		// Содержимое первой панели
-		JLabel lCostOneDay = new JLabel("Стоимость одного дня проживания");
-		JLabel lDays = new JLabel("Количество дней проживания");
-		JLabel lNumberOfPeople = new JLabel("Количество человек");
+    private JTextField jCostOneDay = new JTextField();//Уровень доступа private используется для сокрытия методов или переменных класса. Переменная может использоваться только внутри класса
 
-		// Содержимое второй панели
-		JLabel lTourists = new JLabel("Индивидуальная стоимость");
-		// Содержимое третьей панели
-		JLabel lAvia = new JLabel("Перелёта");
-		JLabel lTransfer = new JLabel("Трансфера");
+    private JTextField jDays = new JTextField();//текстовое поле для количества дней
+    private JTextField jNumberOfPeople = new JTextField();//текстовое поле для количества человек
+
+    private JTextField[] jPersonalAviaCost = new JTextField[MAX_PEOPLE];
+    private JTextField[] jPersonalTransferCost = new JTextField[MAX_PEOPLE];    
+    private final JTextPane lError = new JTextPane(); 
+    // Таблица для ввода стоимостей трансфера и авиаперелёта для отдельных пассажиров.
+
+    private final JPanel pTable = new JPanel(new GridLayout(0, 2, 4, 4));// Невидимая панель (panel)или, как ещё её называют, pane (оконное стекло) содержит все кнопки, текстовые поля, метки и другие компоненты. Панели создаются с помощью класса JPanel. GridLayout - табличное расположение. Задаем расстояние между ячейками по вертикали и горизонтали  в четыре пикселя.
+    private final JFrame frame = new JFrame("Рассчёт стоимости тура");// Создаём фрейм и задаём его основную панель
+
+    // Визуальные свойства текста
+    SimpleAttributeSet attribs = new SimpleAttributeSet();//attribs -иное название для поля класса…простой набор аттрибутов
+    private final DocumentListener onFillListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) { // слово public означает,что метод changedUpdate() доступен для любого другого класса Java или самой JVM. ..изменить события.. обновление документов    
+                    process();
+            }
+            public void removeUpdate(DocumentEvent e) { // удалить обновление
+                    process();
+            }
+            public void insertUpdate(DocumentEvent e) { // вставить обновление
+                    process();
+            }
+            public void process() {
+
+            // Сперва проверяем всю форму.
+                    if (jNumberOfPeople.getText().equals("") || !validate()) {
+                            return; // getText-получает текст. equals-проверка строк на равенство. Восклицательный знак-оператор отрицания
+                    }
+                    int prevNumberOfPeople = numberOfPeople;//prev-предыдущая
+                    numberOfPeople=Integer.parseInt(jNumberOfPeople.getText());// Преобразуем jNumberOfPeople в целое число и погружаемся на глубину, которая определяется переменной numberOfPeople
+                    buildTouristsTable(prevNumberOfPeople);
+            }
+    };
+public static void main(String[] args) /* блок класса main-основной метод. Без него класс может быть откомпилирован но не выполнен. public - спецификатор доступа. static - позволяет методу main() вызываться без потребности создавать образец класса. Ключевое слово void говорит компилятору, что метод не возвращает никакого значения. String [ ] args - один из параметров, который передаётся основному методу. Любая информация, которую мы передаём методу, получена переменными, которые упомянуты в пределах круглой скобки метода. Эти переменные - параметры этого метода.*/
+ {
+            new Calculator(); //В Java для создания экземпляров классов и выделения под них памяти используется оператор new
+    }
+public Calculator() {
+            // Создаём окно приложения
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// Точка, которая находится между классом и именем метода означает, что этот метод был обьявлен внутри этого класса.
+            	
+            // Создаём внутренности окна
+            JPanel pMain = new JPanel();
+            
+            JPanel pFirst = new JPanel();
+            pFirst.setPreferredSize(new Dimension(300,110));
+            pFirst.setLayout(new BoxLayout(pFirst, BoxLayout.Y_AXIS));//ось у
+            JPanel pTableColsHeadings = new JPanel(new GridLayout(0, 2));
+            JPanel pButtons = new JPanel(new GridLayout(0, 2));
+            JPanel pTableHeader = new JPanel();
+            JPanel pError = new JPanel();
+
+            //panel.setLayout(new GridLayout(0, 1));
+            pMain.setLayout(new BoxLayout(pMain, BoxLayout.Y_AXIS));// BoxLayout - расположение по горизонтали или вертикали. Когда окно с BoxLayout меняет свой размер, его элементы управления не смещаются со своих позиций. BoxLayout позволяет элементам окна иметь разные размеры
+            pMain.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+            // Содержимое первой панели
+            JLabel lCostOneDay = new JLabel("Стоимость одного дня проживания");
+            JLabel lDays = new JLabel("Количество дней проживания");
+            JLabel lNumberOfPeople = new JLabel("Количество человек");
+
+            // Содержимое второй панели
+            JLabel lTourists = new JLabel("Индивидуальная стоимость");
+            // Содержимое третьей панели
+            JLabel lAvia = new JLabel("Перелёта");
+            JLabel lTransfer = new JLabel("Трансфера");
 // Содержимое панели с ошибками
 		// Установаить внешний вид теста в сообщени об ошибке
 		StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
